@@ -12,8 +12,8 @@ load_dotenv()
 
 app = Flask(__name__)
 
-app.secret_key = 'abcdefghijklmn'
-app.permanent_session_lifetime = timedelta(minutes=30)
+app.secret_key = 'normal'
+app.permanent_session_lifetime = timedelta(minutes=1)
 
 STATE_LEN = 30
 CODE_VERIFIER_LEN = 64
@@ -59,6 +59,7 @@ def callback():
   code = request.args.get('code')
   if not code:
     return 'codeがありません', 400
+  print(code)
 
   base_url = "https://accounts.google.com/o/oauth2/token"
   params = {
