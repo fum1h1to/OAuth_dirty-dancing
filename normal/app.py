@@ -24,6 +24,7 @@ CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 def randomname(n):
   randlst = [random.choice(string.ascii_letters + string.digits) for i in range(n)]
   return ''.join(randlst)
+  # return 'test'
 
 @app.route('/')
 def index():
@@ -34,7 +35,7 @@ def oauth():
   session.permanent = True 
   state = randomname(STATE_LEN)
   session['state'] = state
-
+  print(session)
   base_url = "https://accounts.google.com/o/oauth2/v2/auth"
   params = {
     "response_type": "code",
@@ -48,17 +49,17 @@ def oauth():
   return redirect(url), 302
 
 @app.route('/callback')
-def callback(): 
+def callback():
   if 'state' not in session:
-    return "stateがありません", 400
+    return render_template('error.html', message="stateがありません"), 400
   
   if request.args.get('state') != session['state']:
   # if True:
-    return 'stateが一致しません', 400
+    return render_template('error.html', message='stateが一致しません'), 400
 
   code = request.args.get('code')
   if not code:
-    return 'codeがありません', 400
+    return render_template('error.html', message='codeがありません'), 400
   print(code)
 
   base_url = "https://accounts.google.com/o/oauth2/token"
@@ -72,7 +73,7 @@ def callback():
   }
   response = requests.post(base_url, headers=headers, data=params, auth=HTTPBasicAuth(CLIENT_ID, CLIENT_SECRET))
   if response.status_code != 200:
-    return 'access tokenの取得に失敗しました', 400
+    return render_template('error.html', message='access tokenの取得に失敗しました'), 400
 
   token = response.json()['access_token']
   session['token'] = token
@@ -101,4 +102,4 @@ def logout():
   return redirect('/'), 302
 
 if __name__ == "__main__":
-  app.run(port=8080, debug=True)
+  app.run(port=8080, debug=True, host="localhost")

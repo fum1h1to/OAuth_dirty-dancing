@@ -32,7 +32,7 @@ def index():
 @app.route('/oauth')
 def oauth():
   session.permanent = True
-  state = "l3H9t0clF7cbKNu4lVkcu1aUYpOEZG"
+  state = "reheuyLuPmIsubnsaALFSDUc9fnc3G"
 
   base_url = "https://accounts.google.com/o/oauth2/v2/auth"
   params = {
@@ -46,6 +46,12 @@ def oauth():
 
   return redirect(url), 302
 
+@app.route('/receiver', methods=['POST'])
+def receiver():
+  json = request.get_json()
+  print(json['location'])
+
+  return 'ok', 200
 
 if __name__ == "__main__":
-  app.run(port=9262, debug=True)
+  app.run(port=9262, debug=True, host="localhost")
