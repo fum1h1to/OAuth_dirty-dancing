@@ -38,7 +38,25 @@
     pip install -r requirements.txt
     ```
 
-4. 偽サイトと正規サイトの起動
+4. `.env`ファイルの準備
+    ```
+    cp .env.template .env
+    ```
+
+5. Oauthクライアントの作成
+
+    今回はGoogleのOAuthクライアントを使用します。<br>
+    [こちら](https://support.google.com/workspacemigrate/answer/9222992?hl=ja)を参考に作成してください。
+
+    なお、認証済みのJavaScript生成元と認証済みのリダイレクトURIは以下の内容を追加してください。その他については任意で大丈夫です。
+
+    認証済みのJavaScript生成元
+    - `http://localhost:8080`
+
+    認証済みのリダイレクトURI
+    - `http://localhost:8080/callback`
+
+6. 偽サイトと正規サイトの起動
 
     偽サイト
     ```
@@ -52,5 +70,5 @@
     python app.py
     ```
 
-`http://localhost:9262`が偽サイトの<br>
-`http://localhost:8080`が正規サイトURLとなる。
+`http://localhost:9262`が偽サイト<br>
+`http://localhost:8080`が正規サイトのURLとなる。
