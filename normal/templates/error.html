@@ -10,6 +10,9 @@
   <p>{{ message }}</p>
 
   <script>
+    // アナリティクス-SDKで以下のような実装をしている場合を想定
+    // postMessageの第二引数に'*'を指定している場合、
+    // どのオリジンに対してもメッセージを送信できてしまう。
     window.opener.postMessage({
       type: 'error',
       message: '{{ message }}',

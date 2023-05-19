@@ -15,27 +15,41 @@ app = Flask(__name__)
 app.secret_key = 'normal'
 app.permanent_session_lifetime = timedelta(minutes=1)
 
+# stateの長さ
 STATE_LEN = 30
-CODE_VERIFIER_LEN = 64
+
+# redirect_uri
 REDIRECT_URI = 'http://localhost:8080/callback'
+
+# OAuthに必要なClient IDとClient Secret
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
 def randomname(n):
+  '''
+  ランダムな文字列を生成する
+  '''
   randlst = [random.choice(string.ascii_letters + string.digits) for i in range(n)]
   return ''.join(randlst)
-  # return 'test'
 
 @app.route('/')
 def index():
+  '''
+  トップページ（正常）
+  '''
   return render_template('index.html')
 
 @app.route('/oauth')
 def oauth():
+  '''
+  OAuthの認証を行う
+  '''
+
   session.permanent = True 
   state = randomname(STATE_LEN)
   session['state'] = state
   print(session)
+
   base_url = "https://accounts.google.com/o/oauth2/v2/auth"
   params = {
     "response_type": "code",
@@ -50,6 +64,9 @@ def oauth():
 
 @app.route('/callback')
 def callback():
+  '''
+  OAuthのコールバックを受け取る
+  '''
   if 'state' not in session:
     return render_template('error.html', message="stateがありません"), 400
   
@@ -82,6 +99,10 @@ def callback():
 
 @app.route('/profile')
 def profile():
+  '''
+  プロフィールを表示する
+  ログインページのようなもの
+  '''
   if 'token' not in session:
     return redirect('/'), 302
 
@@ -98,6 +119,9 @@ def profile():
 
 @app.route('/logout')
 def logout():
+  '''
+  ログアウトする
+  '''
   session.pop('token', None)
   return redirect('/'), 302
 

